@@ -2,7 +2,7 @@ import MapView from "@/components/map-view"
 import type { TileType } from "@/lib/types"
 
 export default async function HomePage() {
-  const res = await fetch(`${process.env.PAGE_URL}/api/map`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_PAGE_URL}/api/map`)
   const tiles = (await res.json()) as TileType[][]
 
   return (

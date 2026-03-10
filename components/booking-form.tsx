@@ -15,6 +15,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
+import type { BookingFormType } from "@/lib/types"
 
 type Props = {
   children: ReactNode
@@ -22,42 +23,53 @@ type Props = {
   col: number
 }
 
-type FormType = {
-  guestName: string
-  roomNumber: string
-}
-
 export default function BookingForm({ children, row, col }: Props) {
   const [open, setOpen] = useState(false)
-  const form = useForm<FormType>({
+  const form = useForm<BookingFormType>({
     defaultValues: {
       guestName: "",
       roomNumber: "",
     },
   })
 
-  async function onSubmit(data: FormType) {
-    console.log(data)
-
-    if (!data.guestName || !data.roomNumber) {
+  async function onSubmit(formData: BookingFormType) {
+    if (!formData.guestName || !formData.roomNumber) {
       form.setError("root", {
-        type: "manual",
         message: "Guest name and room number are required",
       })
     }
 
-    if (!/^\d+$/.test(data.roomNumber)) {
+    if (!/^\d+$/.test(formData.roomNumber)) {
       form.setError("roomNumber", {
-        type: "manual",
         message: "Room number must be a number",
       })
     }
 
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve()
-      }, 2000)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_PAGE_URL}/api/booking`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...formData,
+      }),
     })
+    if (!res.ok) {
+      const errorData = await res.json()
+      form.setError("root", {
+        message: errorData || "Failed to book the cabana",
+      })
+      return
+    }
+
+    const data: boolean = await res.json()
+
+    if (!data) {
+      form.setError("root", {
+        message: "Invalid guest name or room number",
+      })
+      return
+    }
 
     setOpen(false)
   }
