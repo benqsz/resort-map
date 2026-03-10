@@ -1,6 +1,7 @@
 import Image from "next/image"
 
-import { TileToImage } from "@/lib/constants"
+import BookingForm from "@/components/booking-form"
+import { TileToAlt, TileToImage } from "@/lib/constants"
 import parsePath from "@/lib/parse-path"
 import { Tile, type TileType } from "@/lib/types"
 
@@ -20,18 +21,32 @@ export default function MapView({ tiles }: Props) {
                 <Image
                   key={`${i}-${j}`}
                   src={TileToImage["#"][variant]}
-                  alt={variant}
+                  alt={TileToAlt[tile]}
                   width={32}
                   height={32}
                   style={{ transform: `rotate(${rotation}deg)` }}
                 />
               )
             }
+
+            if (tile === Tile.Cabana) {
+              return (
+                <BookingForm key={`${i}-${j}`} row={i} col={j}>
+                  <Image
+                    src={TileToImage[tile]}
+                    alt={TileToAlt[tile]}
+                    width={32}
+                    height={32}
+                  />
+                </BookingForm>
+              )
+            }
+
             return (
               <Image
                 key={`${i}-${j}`}
                 src={TileToImage[tile]}
-                alt={tile}
+                alt={TileToAlt[tile]}
                 width={32}
                 height={32}
               />

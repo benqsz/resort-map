@@ -22,3 +22,11 @@ export const TileToImage = {
     [PathVariant.End]: PathEndImage,
   },
 } as const
+
+export const TileToAlt = {
+  [Tile.Cabana]: "Cabana",
+  [Tile.Pool]: "Pool",
+  [Tile.Chalet]: "Chalet",
+  [Tile.Empty]: "Empty",
+  [Tile.Path]: "Path",
+} as const
