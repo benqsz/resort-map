@@ -2,18 +2,16 @@ import * as fs from "node:fs/promises"
 
 import { NextResponse } from "next/server"
 
+import parseTiles from "@/lib/parse-tiles"
+
 export async function GET(_req: Request) {
   try {
     const map = await fs.readFile(`${process.env.MAP_PATH}`, {
       encoding: "utf8",
     })
+    const parsed = parseTiles(map)
 
-    return NextResponse.json(
-      {
-        map,
-      },
-      { status: 200 }
-    )
+    return NextResponse.json(parsed, { status: 200 })
   } catch (e) {
     console.error(e)
     return NextResponse.json(
