@@ -10,12 +10,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const optionDefinitions = [
-  { name: "map", alias: "m", type: String },
-  {
-    name: "bookings",
-    alias: "b",
-    type: String,
-  },
+  { name: "map", alias: "m" },
+  { name: "bookings", alias: "b" },
 ]
 
 const options = commandLineArgs(optionDefinitions)
