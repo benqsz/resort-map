@@ -3,19 +3,19 @@ import fs from "node:fs/promises"
 import { NextResponse } from "next/server"
 
 import { bookings } from "@/lib/bookings"
-import type { BookingFormType, BookingType } from "@/lib/types"
+import type { BookingType } from "@/lib/types"
 
 export async function POST(req: Request) {
   try {
-    const formData: BookingFormType = await req.json()
+    const formData: BookingType = await req.json()
 
-    if (!formData.guestName || !formData.roomNumber) {
+    if (!formData.guestName || !formData.room) {
       return NextResponse.json("Guest name and room number are required", {
         status: 400,
       })
     }
 
-    if (!/^\d+$/.test(formData.roomNumber)) {
+    if (!/^\d+$/.test(formData.room)) {
       return NextResponse.json("Room number must be a number", { status: 400 })
     }
 
@@ -43,14 +43,14 @@ export async function POST(req: Request) {
 
     const bookingToReserve = fileBookings.find(
       (booking) =>
-        Number(booking.room) === Number(formData.roomNumber) &&
+        Number(booking.room) === Number(formData.room) &&
         booking.guestName === formData.guestName
     )
 
     if (bookingToReserve) {
       const isAlreadyBooked = bookings.find(
         (booking) =>
-          Number(booking.room) === Number(formData.roomNumber) &&
+          Number(booking.room) === Number(formData.room) &&
           booking.guestName === formData.guestName
       )
 

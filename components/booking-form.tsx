@@ -15,7 +15,7 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
-import type { BookingFormType } from "@/lib/types"
+import type { BookingType } from "@/lib/types"
 
 type Props = {
   children: ReactNode
@@ -25,22 +25,22 @@ type Props = {
 
 export default function BookingForm({ children, row, col }: Props) {
   const [open, setOpen] = useState(false)
-  const form = useForm<BookingFormType>({
+  const form = useForm<BookingType>({
     defaultValues: {
       guestName: "",
-      roomNumber: "",
+      room: "",
     },
   })
 
-  async function onSubmit(formData: BookingFormType) {
-    if (!formData.guestName || !formData.roomNumber) {
+  async function onSubmit(formData: BookingType) {
+    if (!formData.guestName || !formData.room) {
       form.setError("root", {
         message: "Guest name and room number are required",
       })
     }
 
-    if (!/^\d+$/.test(formData.roomNumber)) {
-      form.setError("roomNumber", {
+    if (!/^\d+$/.test(formData.room)) {
+      form.setError("room", {
         message: "Room number must be a number",
       })
     }
@@ -114,7 +114,7 @@ export default function BookingForm({ children, row, col }: Props) {
               )}
             />
             <Controller
-              name="roomNumber"
+              name="room"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>

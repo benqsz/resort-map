@@ -9,9 +9,9 @@ export async function GET(_req: Request) {
     const map = await fs.readFile(`${process.env.MAP_PATH}`, {
       encoding: "utf8",
     })
-    const parsed = parseTiles(map)
+    const parsedMap = parseTiles(map)
 
-    return NextResponse.json(parsed, { status: 200 })
+    return NextResponse.json(parsedMap, { status: 200 })
   } catch (e) {
     console.error(e)
     return NextResponse.json(

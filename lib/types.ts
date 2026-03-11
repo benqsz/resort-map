@@ -18,11 +18,6 @@ export const PathVariant = {
 
 export type PathVariantType = (typeof PathVariant)[keyof typeof PathVariant]
 
-export type BookingFormType = {
-  guestName: string
-  roomNumber: string
-}
-
 export type BookingType = {
   guestName: string
   room: string
