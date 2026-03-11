@@ -1,5 +1,6 @@
 import fs from "node:fs/promises"
 
+import { revalidateTag } from "next/cache"
 import { NextResponse } from "next/server"
 
 import { bookings } from "@/lib/bookings"
@@ -9,7 +10,7 @@ export async function POST(req: Request) {
   try {
     const formData: BookingType = await req.json()
 
-    if (!formData.guestName || !formData.room) {
+    if (!formData.guestName || !formData.room || !formData.id) {
       return NextResponse.json("Guest name and room number are required", {
         status: 400,
       })
@@ -39,28 +40,41 @@ export async function POST(req: Request) {
       throw new Error("Invalid JSON format")
     }
 
-    const fileBookings: BookingType[] = data
-
-    const bookingToReserve = fileBookings.find(
+    const bookingToReserve = data.find(
       (booking) =>
         Number(booking.room) === Number(formData.room) &&
         booking.guestName === formData.guestName
     )
 
     if (bookingToReserve) {
-      const isAlreadyBooked = bookings.find(
+      const isCabanaAlreadyBooked = !!bookings.find(
+        (booking) => booking.id === formData.id
+      )
+
+      if (isCabanaAlreadyBooked) {
+        return NextResponse.json("This cabana is already reserved", {
+          status: 400,
+        })
+      }
+
+      const isRoomAlreadyBooked = !!bookings.find(
         (booking) =>
           Number(booking.room) === Number(formData.room) &&
           booking.guestName === formData.guestName
       )
 
-      if (isAlreadyBooked) {
-        return NextResponse.json("This booking is already reserved", {
+      if (isRoomAlreadyBooked) {
+        return NextResponse.json("This room is already booked", {
           status: 400,
         })
       }
 
-      bookings.push(bookingToReserve)
+      bookings.push({
+        id: formData.id,
+        ...bookingToReserve,
+      })
+
+      revalidateTag("map", "max")
       return NextResponse.json(true, { status: 200 })
     }
 

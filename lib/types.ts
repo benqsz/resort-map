@@ -19,6 +19,12 @@ export const PathVariant = {
 export type PathVariantType = (typeof PathVariant)[keyof typeof PathVariant]
 
 export type BookingType = {
+  id: string
   guestName: string
   room: string
+}
+
+export type MapResponseType = {
+  map: TileType[][]
+  bookings: BookingType[]
 }

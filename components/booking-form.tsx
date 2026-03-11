@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState, type ReactNode } from "react"
 import { Controller, useForm } from "react-hook-form"
 
@@ -25,8 +26,10 @@ type Props = {
 
 export default function BookingForm({ children, row, col }: Props) {
   const [open, setOpen] = useState(false)
+  const router = useRouter()
   const form = useForm<BookingType>({
     defaultValues: {
+      id: `${row}-${col}`,
       guestName: "",
       room: "",
     },
@@ -72,6 +75,7 @@ export default function BookingForm({ children, row, col }: Props) {
     }
 
     setOpen(false)
+    router.refresh()
   }
 
   function handleChange(nextOpen: boolean) {
