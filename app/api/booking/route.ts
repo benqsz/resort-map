@@ -2,6 +2,7 @@ import fs from "node:fs/promises"
 
 import { NextResponse } from "next/server"
 
+import { bookings } from "@/lib/bookings"
 import type { BookingFormType, BookingType } from "@/lib/types"
 
 export async function POST(req: Request) {
@@ -35,24 +36,31 @@ export async function POST(req: Request) {
       })
 
     if (!isJsonValid) {
-      console.error(
-        'Invalid JSON format: expected an array of objects with "room" and "guestName" properties, ' +
-          'where "room" is a string that can be converted to a number.'
-      )
-      return NextResponse.json("Unknow error while processing booking", {
-        status: 500,
-      })
+      throw new Error("Invalid JSON format")
     }
 
-    const bookings: BookingType[] = data
+    const fileBookings: BookingType[] = data
 
-    const isValidFormData = bookings.find(
+    const bookingToReserve = fileBookings.find(
       (booking) =>
         Number(booking.room) === Number(formData.roomNumber) &&
         booking.guestName === formData.guestName
     )
 
-    if (isValidFormData) {
+    if (bookingToReserve) {
+      const isAlreadyBooked = bookings.find(
+        (booking) =>
+          Number(booking.room) === Number(formData.roomNumber) &&
+          booking.guestName === formData.guestName
+      )
+
+      if (isAlreadyBooked) {
+        return NextResponse.json("This booking is already reserved", {
+          status: 400,
+        })
+      }
+
+      bookings.push(bookingToReserve)
       return NextResponse.json(true, { status: 200 })
     }
 
